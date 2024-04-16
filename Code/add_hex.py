@@ -49,7 +49,11 @@ accidents = pd.read_csv(input_file)
 accidents['Region'] = accidents.apply(lambda r : geo_h3(r, resolution), axis = 1)
 accidents[['Centroid_Lat', 'Centroid_Lng']] = accidents.apply(lambda r : get_centroid(r), axis = 1)
 
-#accidents = accidents.join(accidents.apply(get_neighbors, axis=1))
+neighbors = accidents.apply(lambda row : get_neighbors(row), axis=1)
+
+accidents = pd.concat([accidents, neighbors], axis=1)
+
+
 accidents = join_demographic(accidents, 'demographic_data.csv')
 accidents.to_csv(output_file, index=False)
 
